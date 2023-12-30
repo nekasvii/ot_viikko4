@@ -34,3 +34,14 @@ package.json : "name": " _paketin nimi_ ",
            "author": "Nelli Sviili",
 
 requests/creating_new_blog.rest : blogin lisäys listään testataan
+
+// OSA 2: testit
+npm install --save-dev jest // Facebookin kehittämä Jest-testikirjasto (test runner)
+"scripts": {...,
+    "test": "jest --verbose"}
+ja tiedoston loppuun:
+"jest": {
+   "testEnvironment": "node"
+ }
+
+npm test
