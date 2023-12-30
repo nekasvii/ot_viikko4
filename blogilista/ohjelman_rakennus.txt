@@ -1,0 +1,36 @@
+npm create vite@latest blogilista -- --template react
+npm install   -> npm run dev
+npm install express
+npm install cors
+npm install mongoose@7.6.5
+npm install --save-dev nodemon
+
+"scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+},
+
+// ympäristömuuttuja:
+npm install dotenv
+// koodiin:
+import dotenv from 'dotenv';
+dotenv.config();
+
+// serveri: ei tarvi
+npm install -g json-server
+npm install json-server --save-dev
+npm run server // käynnistys
+
+// koodiin:
+.env : ympäristömuuttujat eli nyt MongoDB osoite
+
+.gitignore : .env ignooraus
+
+index.js : const mongoUrl = process.env.MONGODB_URI
+	   .then/.catch -looppi mongoose connectin yhteyteen
+	   const PORT = process.env.PORT eli portti ympäristömuuttujan kautta
+
+package.json : "name": " _paketin nimi_ ",
+           "author": "Nelli Sviili",
+
+requests/creating_new_blog.rest : blogin lisäys listään testataan

@@ -1,0 +1,11 @@
+{
+  "blogs": [
+    {
+      "id": 1,
+      "title": "Elman koirat",
+      "author": "Elma",
+      "url": "www.elmankoirat.fi",
+      "likes": 1
+    }
+  ]
+}
