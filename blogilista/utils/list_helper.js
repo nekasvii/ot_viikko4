@@ -1,5 +1,5 @@
-// teht 4.6 apufunktioita ja yksikkötestejä step4 OK
-// mostBlogs-funktio, joka selvittää kirjoittajan, jolla on eniten blogeja
+// teht 4.7 apufunktioita ja yksikkötestejä step5 OK
+// mostLikes-funktio, joka selvittää kirjoittajan, jonka blogeilla on eniten tykkäyksiä
 
 const dummy = (blogs) => {
     // ...saa taulukollisen blogeja ja palauttaa luvun 1
@@ -36,7 +36,7 @@ const mostBlogs = (blogs) => {
 
   const authorCounter = blogs.reduce((counts, blog) => {
     counts[blog.author] = (counts[blog.author] || 0) + 1
-    return counts;
+    return counts
   }, {})
 
   let maxBlogs = 0
@@ -54,10 +54,39 @@ const mostBlogs = (blogs) => {
     blogs: maxBlogs
   }
 }
+
+const mostLikes = (blogs) => {
+  // mostLikes-funktio, joka selvittää kirjoittajan, jonka blogeilla on eniten tykkäyksiä
+
+  if (blogs.length === 0) {
+    return 0
+  }
+
+  const authorCounter = blogs.reduce((likes, blog) => {
+    likes[blog.author] = (likes[blog.author] || 0) + blog.likes
+    return likes
+  }, {})
+
+  let maxLikes = 0
+  let favoriteAuthor = ''
+
+  for (const author in authorCounter) {
+    if (authorCounter[author] > maxLikes) {
+      maxLikes = authorCounter[author]
+      favoriteAuthor = author
+    }
+  }
+
+  return {
+    author: favoriteAuthor,
+    likes: maxLikes
+  }
+}
   
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
