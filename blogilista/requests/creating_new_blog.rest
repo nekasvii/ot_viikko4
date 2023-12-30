@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Cocktailpalat illanistujaisiin",
-    "author": "Hellapoliisi",
+    "title": "Cocktailpalat illanistujaisiin 2",
+    "author": "Hellapoliisi 2",
     "url": "https://www.hellapoliisi.fi/reseptit/pikkusuolaiset/cocktailpalat-illanistujaisiin/",
     "likes": 100
 }
