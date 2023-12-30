@@ -1,5 +1,4 @@
-// teht 4.4 apufunktioita ja yksikkötestejä step2
-// testataan totalLikes, joka laskee taulukoiden tykkäykset yhteen
+
 const listHelper = require('../utils/list_helper')
 
 describe('dummy', () => {
