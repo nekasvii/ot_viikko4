@@ -1,9 +1,12 @@
-// teht 4.2 blogilista step2 OK
-// koodin jakaminen useaan moduuliin
+// 
+// muutettu vaatimaan title jokaiselta Blog-merkinnältä
 const mongoose = require('mongoose')
 
 const blogSchema = mongoose.Schema({
-    title: String,
+    title: {
+      type: String,
+      required: true
+    },
     author: String,
     url: String,
     likes: Number

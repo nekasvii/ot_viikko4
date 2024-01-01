@@ -1,11 +1,15 @@
 // teht 4.2 blogilista step2
 // eristetään konsoliin tulostelu omaan moduliinsa
 const info = (...params) => {
-    console.log(...params)
+    if (process.env.NODE_ENV !== 'test') {     
+      console.log(...params)  
+    }
   }
   
   const error = (...params) => {
-    console.error(...params)
+    if (process.env.NODE_ENV !== 'test') {     
+      console.error(...params)  
+    }
   }
   
   module.exports = {

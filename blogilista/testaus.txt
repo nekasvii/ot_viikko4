@@ -1,0 +1,56 @@
+
+integraatiotestit = sovelluksen komponentteja yhtä aikaa käyttäviä testejä 
+(tässä REST API -tasolta ja käytetään tietokantaa)
+
+yleensä: määritellä sovelluksille omat moodinsa tuotantokäyttöön, sovelluskehitykseen ja testaukseen
+
+Noden konventiona on määritellä projektin suoritusmoodi ympäristömuuttujan NODE_ENV avulla
+"start": "NODE_ENV=production node index.js",    
+"dev": "NODE_ENV=development nodemon index.js",
+"test": "NODE_ENV=test jest --verbose --runInBand"
+
+npm install --save-dev cross-env
+cross-env -kirjastolla Windows yhteensopivaksi
+
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    // ...
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+  },
+
+-> .env tiedostoon testi-url ja configiin maininta siitä
+
+optimaalista, että jokaiseen testiin olisi oma testitietokantansa käytettävissä 
+esim. keskusmuistissa toimivan Mongon tai Docker-kontainerin kautta
+
+Jest: SuperTest-kirjasto:
+npm install --save-dev supertest
+
+robustimmat testit: tulee tietokannan tila nollata testien alussa ja sen jälkeen laittaa kantaan hallitusti testien tarvitsema data
+esim.  Jestin metodia afterAll 
+
+testien suorittaminen yksitellen:
+npm test -- tests/blog_api.test.js
+
+testin suorittaminen nimen tai nimen osan perusteella:
+npm test -- -t 'title'
+
+promisen avulla toteutettu muistiinpanojen haku:
+Note.find({})
+  .then(notes => {
+    return notes[0].remove()
+  })
+  .then(response => {
+    console.log('the first note is removed')
+    // more code here
+  })
+
+sama toteutettu awaitin avulla:
+const notes = await Note.find({})
+const response = await notes[0].remove()
+console.log('the first note is removed')
+
+
+
+
