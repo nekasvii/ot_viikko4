@@ -20,10 +20,49 @@ beforeEach(async () => {
 
 // SuperTestin mekanismeja käyttävä testi
 test('all blogs are returned as json', async () => {
-    const response = await api.get('/api/blogs')
-
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
+    await api
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 })
+
+test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+  
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+// testi blogin näyttämiselle
+test('a specific blog can be viewed', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+  
+    const blogToView = blogsAtStart[0]
+  
+    const resultBlog = await api    
+        .get(`/api/blogs/${blogToView.id}`)    
+        .expect(200)    
+        .expect('Content-Type', /application\/json/)
+    expect(resultBlog.body).toEqual(blogToView)
+  })
+  
+  // testi blogin poistamiselle
+  test('a blog can be deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+  
+    await api    
+        .delete(`/api/blogs/${blogToDelete.id}`)    
+        .expect(204)
+    const blogsAtEnd = await helper.blogsInDb()
+  
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length - 1
+    )
+  
+    const titles = blogsAtEnd.map(r => r.title)
+  
+    expect(titles).not.toContain(blogToDelete.title)
+  })
 
 // Jestin expect-kirjastoa käyttävä response.body:n oikeellisuutta tarkistava testi
 test('there are two blogs', async () => {
