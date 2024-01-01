@@ -1,6 +1,7 @@
 // Teht 
 // muutettu get-olio async-funktioksi virheilmoituksineen
 // catchit ulkoistettu  express-async-errors -kirjastolle
+// lisätty delete-operaatio
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
