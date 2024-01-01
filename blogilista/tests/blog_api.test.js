@@ -1,6 +1,9 @@
 // Testi importtaa tiedostoon app.js määritellyn Express-sovelluksen 
 // ja käärii sen funktion supertest avulla ns. superagent-olioksi
 // Tämä olio sijoitetaan muuttujaan api ja sen kautta testit voivat tehdä HTTP-pyyntöjä backendiin
+// 4.8 blogilistan testit step1 OK
+// SuperTest-kirjastolla testit blogilistan osoitteeseen /api/blogs tapahtuvalle HTTP GET ‑pyynnölle
+// -> testi: 'all blogs are returned as json'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -12,13 +15,10 @@ const Blog = require('../models/blog')
 // tyhjennetään blogilista aina aluksi
 beforeEach(async () => {  
     await Blog.deleteMany({})  
-    let blogObject = new Blog(helper.initialBlogs[0])  
-    await blogObject.save()  
-    blogObject = new Blog(helper.initialBlogs[1])  
-    await blogObject.save()
+    await Blog.insertMany(helper.initialBlogs)
 })
 
-// SuperTestin mekanismeja käyttävä testi
+// SuperTestin mekanismeja käyttävä testi HTTP GET ‑pyynnölle
 test('all blogs are returned as json', async () => {
     await api
     .get('/api/blogs')
