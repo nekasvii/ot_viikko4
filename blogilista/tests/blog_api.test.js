@@ -13,7 +13,10 @@
 // 4.11 blogilistan testit step4 OK
 // testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
 // -> testi: 'if no likes value given, value is 0'
-
+// 4.12 blogilistan testit step5 
+// testi osoitteeseen /api/blogs tapahtuvalle HTTP POST ‑pyynnölle jotka varmistavat, että jos uusi 
+// blogi ei sisällä kenttää title tai kenttää url, pyyntöön vastataan statuskoodilla 400 Bad Request.
+// -> testi: 'HTTP POST without title or url gives 400 Bad Request'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -119,8 +122,27 @@ test('a valid blog can be added', async () => {
     )
 })
 
-// testaa, ettei ilman titlea voi tallentaa blogia
-test('blog without title is not added', async () => {
+// testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
+test('if no likes value given, value is 0', async () => {
+    const newBlog = {
+        title: 'Hämärää touhua',
+        url: 'https://www.hamaraatouhua.fi/'
+    }
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const addedBlog = blogsAtEnd.find(b => b.title === 'Hämärää touhua')
+    expect(addedBlog.likes).toBe(0)
+})
+
+// testi osoitteeseen /api/blogs tapahtuvalle HTTP POST ‑pyynnölle jotka varmistavat, että jos uusi 
+// blogi ei sisällä kenttää title tai url, pyyntöön vastataan statuskoodilla 400 Bad Request.
+test('HTTP POST without title or url gives 400 Bad Request', async () => {
     const newBlog = {
       likes: 0
     }
@@ -133,23 +155,6 @@ test('blog without title is not added', async () => {
     const blogsAtEnd = await helper.blogsInDb()
   
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-})
-
-// testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
-test('if no likes value given, value is 0', async () => {
-    const newBlog = {
-        title: 'Hämärää touhua'
-    }
-    
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    const addedBlog = blogsAtEnd.find(b => b.title === 'Hämärää touhua')
-    expect(addedBlog.likes).toBe(0)
 })
 
 //Async/await-syntaksin käyttö liittyy siihen, että palvelimelle tehtävät pyynnöt ovat asynkronisia operaatioita
