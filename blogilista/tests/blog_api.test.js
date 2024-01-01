@@ -7,6 +7,9 @@
 // 4.9 blogilistan testit step2 OK
 // palautettujen blogien identifioivan kentän tulee olla nimeltään id; teht 4.9
 // -> testi: 'all blogs are identified by id'
+// 4.10 blogilistan testit step3 OK
+// testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä
+// -> testi: 'a valid blog can be added'
 
 
 const mongoose = require('mongoose')
@@ -88,7 +91,9 @@ test('a specific blog s title is within the returned titles', async () => {
     expect(titles).toContain('Puutarhavuosi 2023')
 })
 
-test('a valid blog can be added ', async () => {
+// testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä; teht 4.10
+// testataan myös titlen oikeellisuus tallennuksen jälkeen
+test('a valid blog can be added', async () => {
     const newBlog = {
         title: 'Katsaus päättyneeseen geokätköilyvuoteen 2023',   
         author: 'weellu',
