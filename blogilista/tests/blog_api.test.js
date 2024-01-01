@@ -10,6 +10,9 @@
 // 4.10 blogilistan testit step3 OK
 // testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä
 // -> testi: 'a valid blog can be added'
+// 4.11 blogilistan testit step4 OK
+// testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
+// -> testi: 'if no likes value given, value is 0'
 
 
 const mongoose = require('mongoose')
@@ -130,6 +133,23 @@ test('blog without title is not added', async () => {
     const blogsAtEnd = await helper.blogsInDb()
   
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
+// testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
+test('if no likes value given, value is 0', async () => {
+    const newBlog = {
+        title: 'Hämärää touhua'
+    }
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const addedBlog = blogsAtEnd.find(b => b.title === 'Hämärää touhua')
+    expect(addedBlog.likes).toBe(0)
 })
 
 //Async/await-syntaksin käyttö liittyy siihen, että palvelimelle tehtävät pyynnöt ovat asynkronisia operaatioita
