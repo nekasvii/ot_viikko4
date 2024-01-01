@@ -4,6 +4,7 @@
 
 const config = require('./utils/config')
 const express = require('express') // npm install express
+require('express-async-errors') // npm install express-async-errors
 const cors = require('cors') // npm install cors
 const blogsRouter = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
@@ -11,6 +12,7 @@ const logger = require('./utils/logger')
 const mongoose = require('mongoose') // npm install mongoose@7.6.5
 
 const app = express()
+module.exports = app
 
 mongoose.set('strictQuery', false)
 

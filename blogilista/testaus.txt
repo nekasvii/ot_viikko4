@@ -51,6 +51,15 @@ const notes = await Note.find({})
 const response = await notes[0].remove()
 console.log('the first note is removed')
 
+-Awaitin käyttö onnistuu ainoastaan jos ollaan async-funktiossa:
+const main = async () => {  const notes = await Note.find({})
+  console.log('operaatio palautti seuraavat muistiinpanot', notes)
 
+  const response = await notes[0].remove()
+  console.log('the first note is removed')
+}
+main()
 
+Kirjasto express-async-errors auttaa refaktoroimaan catchit ulos metodeista:
+npm install express-async-errors
 

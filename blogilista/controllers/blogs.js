@@ -1,5 +1,6 @@
 // Teht 
 // muutettu get-olio async-funktioksi virheilmoituksineen
+// catchit ulkoistettu  express-async-errors -kirjastolle
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
@@ -9,15 +10,11 @@ blogsRouter.get('/', async (request, response, next) => {
 })
 
 blogsRouter.get('/:id', async (request, response, next) => {
-  try {
-    const blog = await Blog.findById(request.params.id)
-    if (blog) {
-      response.json(blog)
-    } else {
-      response.status(404).end()
-    }
-  } catch(exception) {
-    next(exception)
+  const blog = await Blog.findById(request.params.id)
+  if (blog) {
+    response.json(blog)
+  } else {
+    response.status(404).end()
   }
 })
 
@@ -31,21 +28,13 @@ blogsRouter.post('/', async (request, response, next) => {
     likes: body.likes
   })
 
-  try {
-    const savedBlog = await blog.save()
-    response.status(201).json(savedBlog)
-  } catch(exception) {
-    next(exception)
-  }
+  const savedBlog = await blog.save()
+  response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
-  try {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
-  } catch (exception) {
-    next(exception)
-  }
+blogsRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
 })
 
 module.exports = blogsRouter
