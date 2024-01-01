@@ -20,6 +20,9 @@
 // 4.13 blogilistan laajennus step1 OK
 // sovellus osaa poistaa yksittäisen blogitekstin ja testaa sen
 // -> testi: 'a blog can be deleted'
+// 4.14 blogilistan laajennus step2 OK
+// sovellus osaa muokata yksittäistä blogia ja sen testit
+// -> testi: 'editing content'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -168,6 +171,38 @@ describe('adding content', () => {
     
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
+})
+
+// tallennetun tiedon muuttaminen yksittäisessä blogimerkinnässä
+describe('editing content', () => {
+    test('editing likes', async () => {
+        const newBlog = {
+            title: 'Hämärää touhua',
+            url: 'https://www.hamaraatouhua.fi/',
+            likes: 1
+        }
+
+        const response = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+        const createdBlog = response.body
+        const updatedBlog = {
+            ...createdBlog,
+            likes: createdBlog.likes + 1
+        }
+
+        await api
+        .put(`/api/blogs/${createdBlog.id}`)
+        .send(updatedBlog)
+        .expect(200)
+
+        const updatedResponse = await api.get(`/api/blogs/${createdBlog.id}`)
+        expect(updatedResponse.body.likes).toBe(createdBlog.likes + 1)
+    })   
+
 })
 
 //Async/await-syntaksin käyttö liittyy siihen, että palvelimelle tehtävät pyynnöt ovat asynkronisia operaatioita
