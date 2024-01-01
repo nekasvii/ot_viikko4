@@ -4,6 +4,10 @@
 // 4.8 blogilistan testit step1 OK
 // SuperTest-kirjastolla testit blogilistan osoitteeseen /api/blogs tapahtuvalle HTTP GET ‑pyynnölle
 // -> testi: 'all blogs are returned as json'
+// 4.9 blogilistan testit step2 OK
+// palautettujen blogien identifioivan kentän tulee olla nimeltään id; teht 4.9
+// -> testi: 'all blogs are identified by id'
+
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -18,13 +22,19 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-// SuperTestin mekanismeja käyttävä testi HTTP GET ‑pyynnölle
+// SuperTestin mekanismeja käyttävä testi HTTP GET ‑pyynnölle; teht 4.8
 test('all blogs are returned as json', async () => {
     await api
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
 })
+
+// testi: palautettujen blogien identifioivan kentän tulee olla nimeltään id; teht 4.9
+test('all blogs are identified by id', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body[0].id).toBeDefined()
+  })
 
 test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
