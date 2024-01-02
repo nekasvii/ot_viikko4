@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkvDpMOkcmlqw6QiLCJpZCI6IjY1OTQxYmY0ZDg0N2U0YTM0NWU0YmI1MSIsImlhdCI6MTcwNDIwNzg2M30.ZlgoUL69NjvBJTMFhm6hOKaV2OiTyj9ZczvI7BITuzk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkvDpMOkcmlqw6QiLCJpZCI6IjY1OTQxYmY0ZDg0N2U0YTM0NWU0YmI1MSIsImlhdCI6MTcwNDIwOTMxN30.htFhZj4x3S1vkbuESJjT7V8quC9qpwi6MCv8cY7wYIg
 
 {
     "title": "Cocktailpalat illanistujaisiin ja muuhun 2",

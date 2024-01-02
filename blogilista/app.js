@@ -7,6 +7,7 @@ const config = require('./utils/config')
 const express = require('express') // npm install express
 require('express-async-errors') // npm install express-async-errors
 const cors = require('cors') // npm install cors
+
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
@@ -29,6 +30,7 @@ mongoose.connect(config.MONGODB_URI)
     logger.error('error connection to MongoDB:', error.message)
   })
 
+app.use(middleware.tokenExtractor)
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())

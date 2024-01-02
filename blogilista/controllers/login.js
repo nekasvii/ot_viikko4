@@ -2,6 +2,8 @@
 // Token-perustainen kirjautuminen 
 // Teht 4.19 blogilistan laajennus step7 OK
 // blogien lisäys vain kirjautuneille
+// Teht 4.20 blogilistan laajennus step8 OK
+// tokenin erottaminen middlewareksi
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
@@ -31,7 +33,7 @@ loginRouter.post('/', async (request, response) => {
 
   response
     .status(200)
-    .send({ token: `Bearer ${token}`, username: user.username, name: user.name })
+    .send({ token, username: user.username, name: user.name })
 })
 
 module.exports = loginRouter
