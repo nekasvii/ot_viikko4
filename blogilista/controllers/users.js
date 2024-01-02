@@ -1,5 +1,7 @@
 // Teht 4.18 blogilistan laajennus step6 OK
 // Token-perustainen kirjautuminen 
+// Teht 4.19 blogilistan laajennus step7 OK 
+// blogien lisäys vain kirjautuneille
 
 const bcrypt = require('bcrypt') // npm install bcrypt
 const usersRouter = require('express').Router()
