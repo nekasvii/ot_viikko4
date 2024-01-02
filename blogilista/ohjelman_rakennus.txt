@@ -45,3 +45,5 @@ ja tiedoston loppuun:
  }
 
 npm test
+npm test -- tests/blog_api.test.js
+

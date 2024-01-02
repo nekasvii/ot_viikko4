@@ -1,5 +1,5 @@
-// 
-// muutettu vaatimaan title jokaiselta Blog-merkinnältä
+// Teht 4.15 blogilistan laajennus step3
+// lisätty käyttäjän id:een tallennus blogin yhteyteen
 const mongoose = require('mongoose')
 
 const blogSchema = mongoose.Schema({
@@ -15,6 +15,10 @@ const blogSchema = mongoose.Schema({
     likes: {
       type: Number,
       default: 0
+    },
+    user: {    
+      type: mongoose.Schema.Types.ObjectId,    
+      ref: 'User'  
     }
   }) 
 

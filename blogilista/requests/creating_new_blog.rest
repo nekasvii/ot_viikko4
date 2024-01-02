@@ -5,5 +5,6 @@ Content-Type: application/json
     "title": "Cocktailpalat illanistujaisiin 2",
     "author": "Hellapoliisi 2",
     "url": "https://www.hellapoliisi.fi/reseptit/pikkusuolaiset/cocktailpalat-illanistujaisiin/",
-    "likes": 100
+    "likes": 2,
+    "userId": "6593da472a5b0793e27b94fe"
 }

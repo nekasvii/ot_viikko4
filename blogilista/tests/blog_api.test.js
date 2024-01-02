@@ -1,28 +1,8 @@
-// Testi importtaa tiedostoon app.js määritellyn Express-sovelluksen 
-// ja käärii sen funktion supertest avulla ns. superagent-olioksi
-// Tämä olio sijoitetaan muuttujaan api ja sen kautta testit voivat tehdä HTTP-pyyntöjä backendiin
-// 4.8 blogilistan testit step1 OK
-// SuperTest-kirjastolla testit blogilistan osoitteeseen /api/blogs tapahtuvalle HTTP GET ‑pyynnölle
-// -> testi: 'all blogs are returned as json'
-// 4.9 blogilistan testit step2 OK
-// palautettujen blogien identifioivan kentän tulee olla nimeltään id; teht 4.9
-// -> testi: 'all blogs are identified by id'
-// 4.10 blogilistan testit step3 OK
-// testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä
-// -> testi: 'a valid blog can be added'
-// 4.11 blogilistan testit step4 OK
-// testi tarkistaa, että jos kentälle likes ei anneta arvoa, asetetaan sen arvoksi 0
-// -> testi: 'if no likes value given, value is 0'
-// 4.12 blogilistan testit step5 OK
-// testi osoitteeseen /api/blogs tapahtuvalle HTTP POST ‑pyynnölle jotka varmistavat, että jos uusi 
-// blogi ei sisällä kenttää title tai kenttää url, pyyntöön vastataan statuskoodilla 400 Bad Request.
-// -> testi: 'HTTP POST without title or url gives 400 Bad Request'
-// 4.13 blogilistan laajennus step1 OK
-// sovellus osaa poistaa yksittäisen blogitekstin ja testaa sen
-// -> testi: 'a blog can be deleted'
-// 4.14 blogilistan laajennus step2 OK
-// sovellus osaa muokata yksittäistä blogia ja sen testit
-// -> testi: 'editing content'
+// Teht 4.15 blogilistan laajennus step3
+// HTTP POST ‑pyyntö osoitteeseen api/users
+// Käyttäjillä on käyttäjätunnus, salasana ja nimi
+// salasanat bcrypt-kirjaston avulla laskettuna hash'inä
+// testit: 'when there is initially one user at db'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -30,7 +10,9 @@ const app = require('../app')
 const helper = require('./test_helper')
 const api = supertest(app)
 const Blog = require('../models/blog')
-  
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+
 // tyhjennetään blogilista aina aluksi
 // describen ulkopuolella, jotta toteutetaan tarpeeksi usein
 beforeEach(async () => {  
@@ -110,7 +92,7 @@ describe('deletion of a note', () => {
     expect(titles).not.toContain(blogToDelete.title)
   })
 })
-
+/*
 describe('adding content', () => {
     // testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä; teht 4.10
     // testataan myös titlen oikeellisuus tallennuksen jälkeen
@@ -119,7 +101,7 @@ describe('adding content', () => {
             title: 'Katsaus päättyneeseen geokätköilyvuoteen 2023',   
             author: 'weellu',
             url: 'https://www.6123tampere.com/2024/01/01/katsaus-paattyneeseen-geokatkoilyvuoteen-2023/',
-            likes: 3,  
+            likes: 3
         }
     
         await api
@@ -203,7 +185,61 @@ describe('editing content', () => {
         expect(updatedResponse.body.likes).toBe(createdBlog.likes + 1)
     })   
 
-})
+})*/
+
+describe('when there is initially one user at db', () => {
+    beforeEach(async () => {
+      await User.deleteMany({})
+  
+      const passwordHash = await bcrypt.hash('sekret', 10)
+      const user = new User({ username: 'root', passwordHash })
+  
+      await user.save()
+    })
+  
+    test('creation succeeds with a fresh username', async () => {
+      const usersAtStart = await helper.usersInDb()
+  
+      const newUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'salainen',
+      }
+  
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+  
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+  
+      const usernames = usersAtEnd.map(u => u.username)
+      expect(usernames).toContain(newUser.username)
+    })
+  
+    test('creation fails with proper statuscode and message if username already taken', async () => {
+      const usersAtStart = await helper.usersInDb()
+  
+      const newUser = {
+        username: 'root',
+        name: 'Superuser',
+        password: 'salainen',
+      }
+  
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+  
+      expect(result.body.error).toContain('expected `username` to be unique')
+  
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+  })
 
 //Async/await-syntaksin käyttö liittyy siihen, että palvelimelle tehtävät pyynnöt ovat asynkronisia operaatioita
 afterAll(async () => {

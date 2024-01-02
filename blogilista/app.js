@@ -1,12 +1,14 @@
-// teht 4.2 blogilista step2 OK
-// koodin jakaminen useaan moduuliin
-// tietokannan muodostus
+// Teht 4.15 blogilistan laajennus step3
+// HTTP POST ‑pyyntö osoitteeseen api/users
+// Käyttäjillä on käyttäjätunnus, salasana ja nimi
+// salasanat bcrypt-kirjaston avulla 
 
 const config = require('./utils/config')
 const express = require('express') // npm install express
 require('express-async-errors') // npm install express-async-errors
 const cors = require('cors') // npm install cors
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose') // npm install mongoose@7.6.5
@@ -32,6 +34,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
