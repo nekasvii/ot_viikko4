@@ -1,4 +1,4 @@
-// Teht 4.15 blogilistan laajennus step3
+// Teht 4.15 blogilistan laajennus step3 OK
 // lisätty käyttäjän id:een tallennus blogin yhteyteen
 const mongoose = require('mongoose')
 

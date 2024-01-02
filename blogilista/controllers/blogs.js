@@ -1,4 +1,4 @@
-// Teht 4.15 blogilistan laajennus step3
+// Teht 4.15 blogilistan laajennus step3 OK
 // lisätty blogimerkinnän yhteyteen tieto käyttäjästä
 
 const blogsRouter = require('express').Router()
