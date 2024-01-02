@@ -1,4 +1,5 @@
-// Teht 4.16 blogilistan laajennus step4 OK
+// Teht 4.17 blogilistan laajennus step5 OK
+//  blogiin tulee tieto sen lisänneestä käyttäjästä populaten avulla
 
 const bcrypt = require('bcrypt') // npm install bcrypt
 const usersRouter = require('express').Router()
