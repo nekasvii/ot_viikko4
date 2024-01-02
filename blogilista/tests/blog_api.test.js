@@ -1,12 +1,7 @@
-// Teht 4.16 blogilistan laajennus step4 OK
-// käyttäjätunnuksen ja salasanan oltava väh. 3 merkkiä pitkiä 
-// -> testi: 'new user, when conflict with username fails with 400'
-// käyttäjätunnuksen oltava uniikka 
-// -> testi: 'new user, when conflict with username fails with 400'
-// salasanan oltava väh. 3 merkkinen
-// -> testi: 'password must be min. 3 characters long or fails with 400'
-// käyttäjätunnuksen oltava väh. 3 merkkinen
-// -> testi: 'username must be min. 3 characters long or fails with 400'
+// Teht 4.23 blogilistan laajennus step11 OK
+// vanhat testit korjattu toimivaksi
+// uusi testi: jos yrittää poistaa blogin ilman tokenia: 401 Unauthorized
+// testi ->'a blog without token cant be deleted'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -75,29 +70,85 @@ describe('viewing a specific blog and its detiles', () => {
     })
 })
 
- 
-describe('deletion of a note', () => {
-  // testi blogin poistamiselle
-  test('a blog can be deleted', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+describe('token needed', () => {
+    // kirjautuminen testikäyttäjänä
+
+    const newUser = {
+        username: 'testikäyttäjä',
+        name: 'Testi Käyttäjä',
+        password: 'testisalasana',
+    }
+
+    const loginUser = async () => {
+        const credentials = {
+          username: 'testikäyttäjä',
+          password: 'testisalasana'
+        }
+      
+        const response = await api
+          .post('/api/login')
+          .send(credentials);
+      
+        return response.body.token;
+      }
+
+      let token
+
+      beforeAll(async () => {
+        await User.deleteMany({})
+        await api
+            .post('/api/users')
+            .send(newUser)
+        token = await loginUser()
+    })
+
+    // testi blogin poistamiselle
+    test('a blog can be deleted', async () => {
+
+        const newBlog = {
+            title: 'Hämärää touhua',
+            url: 'https://www.hamaraatouhua.fi/'
+        }
+        
+        const blogResponse = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+        const blogToDelete = blogResponse.body
+      
+        await api    
+            .delete(`/api/blogs/${blogToDelete.id}`)   
+            .set('Authorization', `Bearer ${token}`) 
+            .expect(204)
+        const blogsAtEnd = await helper.blogsInDb()
+      
+        expect(blogsAtEnd).toHaveLength(
+          helper.initialBlogs.length
+        )
+      
+        const titles = blogsAtEnd.map(r => r.title)
+      
+        expect(titles).not.toContain(blogToDelete.title)
+    })
+
+    // jos yrittää poistaa blogin ilman tokenia: 401 Unauthorized
+    test('a blog without token cant be deleted', async () => {
+
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
   
-    await api    
-        .delete(`/api/blogs/${blogToDelete.id}`)    
-        .expect(204)
-    const blogsAtEnd = await helper.blogsInDb()
-  
-    expect(blogsAtEnd).toHaveLength(
-      helper.initialBlogs.length - 1
-    )
-  
-    const titles = blogsAtEnd.map(r => r.title)
-  
-    expect(titles).not.toContain(blogToDelete.title)
-  })
-})
-/*
-describe('adding content', () => {
+        await api    
+            .delete(`/api/blogs/${blogToDelete.id}`)    
+            .expect(401)
+
+        const blogsAtEnd = await helper.blogsInDb()
+    
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
     // testi sovellukseen voi lisätä blogeja osoitteeseen /api/blogs tapahtuvalla HTTP POST ‑pyynnöllä; teht 4.10
     // testataan myös titlen oikeellisuus tallennuksen jälkeen
     test('a valid blog can be added', async () => {
@@ -110,6 +161,7 @@ describe('adding content', () => {
     
         await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -132,6 +184,7 @@ describe('adding content', () => {
         
         await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -150,6 +203,7 @@ describe('adding content', () => {
     
         await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
     
@@ -157,10 +211,8 @@ describe('adding content', () => {
     
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
-})
 
-// tallennetun tiedon muuttaminen yksittäisessä blogimerkinnässä
-describe('editing content', () => {
+    // tallennetun tiedon muuttaminen yksittäisessä blogimerkinnässä
     test('editing likes', async () => {
         const newBlog = {
             title: 'Hämärää touhua',
@@ -170,6 +222,7 @@ describe('editing content', () => {
 
         const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -187,9 +240,8 @@ describe('editing content', () => {
 
         const updatedResponse = await api.get(`/api/blogs/${createdBlog.id}`)
         expect(updatedResponse.body.likes).toBe(createdBlog.likes + 1)
-    })   
-
-})*/
+    }) 
+})
 
 describe('when there is initially one user at db', () => {
     beforeEach(async () => {
