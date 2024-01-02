@@ -1,5 +1,7 @@
-// Teht 4.16 blogilistan laajennus step4 OK
-// lisätty blogimerkinnän yhteyteen tieto käyttäjästä
+// Teht 4.21 blogilistan laajennus step9 OK
+// blogin poisto onnistuu vain merkinnän luoneen käyttäjän toimesta 
+// ja kirjautuneena (token sama)
+// testattu VS REST Clientillä toimivaksi
 
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
@@ -61,7 +63,32 @@ blogsRouter.post('/', async (request, response, next) => {
   response.status(201).json(savedBlog)
 })
 
+// blogimerkinnän poisto
 blogsRouter.delete('/:id', async (request, response) => {
+  if (!request.token) {
+    return response.status(401).json({ error: 'token missing' });
+  }
+
+  const blog = await Blog.findById(request.params.id);
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' });
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(request.token, process.env.SECRET);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' });
+  }
+
+  if (blog.user.toString() !== decodedToken.id) {
+    return response.status(401).json({ error: 'no rights to delete this blog' });
+  }
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
