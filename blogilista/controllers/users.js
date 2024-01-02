@@ -1,7 +1,4 @@
-// Teht 4.15 blogilistan laajennus step3 OK
-// HTTP POST ‑pyyntö osoitteeseen api/users
-// Käyttäjillä on käyttäjätunnus, salasana ja nimi
-// salasanat bcrypt-kirjaston avulla laskettuna hash'inä
+// Teht 4.16 blogilistan laajennus step4 OK
 
 const bcrypt = require('bcrypt') // npm install bcrypt
 const usersRouter = require('express').Router()
@@ -15,6 +12,10 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
+
+  if (username.length < 3 || password.length < 3) {
+    return response.status(400).json({ error: 'username and password must be minimum 3 characters long' })
+  }
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)

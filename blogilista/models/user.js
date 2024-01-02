@@ -1,7 +1,8 @@
-// Teht 4.15 blogilistan laajennus step3
-// HTTP POST ‑pyyntö osoitteeseen api/users
-// Käyttäjillä on käyttäjätunnus, salasana ja nimi
-// salasanat bcrypt-kirjaston avulla laskettuna hash'inä
+// Teht 4.16 blogilistan laajennus step4 OK
+// käyttäjätunnuksen ja salasanan oltava väh. 3 merkkiä pitkiä OK
+// käyttäjätunnuksen oltava uniikka OK
+// luomisoperaatiolle sopivat statuskoodit palautukseen OK: middlewaressa
+// testit OK
 
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
@@ -9,11 +10,16 @@ const uniqueValidator = require('mongoose-unique-validator')
 const userSchema = mongoose.Schema({
     username: {    
         type: String,    
-        required: true,    
-        unique: true  
+        required: true,
+        minlength: 3,    
+        unique: true 
     },  
     name: String,
-    passwordHash: String,
+    passwordHash: {
+        type: String,    
+        required: true,
+        minlength: 3
+    },
      blogs: [
         {
         type: mongoose.Schema.Types.ObjectId,

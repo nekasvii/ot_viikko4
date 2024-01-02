@@ -1,8 +1,12 @@
-// Teht 4.15 blogilistan laajennus step3
-// HTTP POST ‑pyyntö osoitteeseen api/users
-// Käyttäjillä on käyttäjätunnus, salasana ja nimi
-// salasanat bcrypt-kirjaston avulla laskettuna hash'inä
-// testit: 'when there is initially one user at db'
+// Teht 4.16 blogilistan laajennus step4 OK
+// käyttäjätunnuksen ja salasanan oltava väh. 3 merkkiä pitkiä 
+// -> testi: 'new user, when conflict with username fails with 400'
+// käyttäjätunnuksen oltava uniikka 
+// -> testi: 'new user, when conflict with username fails with 400'
+// salasanan oltava väh. 3 merkkinen
+// -> testi: 'password must be min. 3 characters long or fails with 400'
+// käyttäjätunnuksen oltava väh. 3 merkkinen
+// -> testi: 'username must be min. 3 characters long or fails with 400'
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -239,6 +243,61 @@ describe('when there is initially one user at db', () => {
       const usersAtEnd = await helper.usersInDb()
       expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
+
+    // käyttäjätunnuksen oltava uniikki
+    test('new user, when conflict with username fails with 400', async () => {
+        const newUser = {
+            username: 'hillapellolla',
+            name: 'Hilla Pelto',
+            password: 'salasana',
+          }
+      
+          await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+
+          const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+      
+          expect(result.body.error).toContain('User validation failed: username: Error, expected `username` to be unique. Value: `hillapellolla`');
+    })
+
+    // käyttäjätunnuksen oltava väh. 3 merkkinen
+    test('username must be min. 3 characters long or fails with 400', async () => {
+        const newUser = {
+            username: 'ei',
+            name: 'Elina Ilola',
+            password: 'salasana',
+        };
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/);
+
+        expect(result.body.error).toContain('username and password must be minimum 3 characters long');
+    });
+
+    // salasanan oltava väh. 3 merkkinen
+    test('password must be min. 3 characters long or fails with 400', async () => {
+        const newUser = {
+            username: 'validusername',
+            name: 'Short Password',
+            password: 'ei',
+        };
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/);
+
+        expect(result.body.error).toContain('username and password must be minimum 3 characters long');
+    });
   })
 
 //Async/await-syntaksin käyttö liittyy siihen, että palvelimelle tehtävät pyynnöt ovat asynkronisia operaatioita

@@ -1,4 +1,4 @@
-// Teht 4.15 blogilistan laajennus step3
+// Teht 4.15 blogilistan laajennus step3 OK
 // HTTP POST ‑pyyntö osoitteeseen api/users
 // Käyttäjillä on käyttäjätunnus, salasana ja nimi
 // salasanat bcrypt-kirjaston avulla 
