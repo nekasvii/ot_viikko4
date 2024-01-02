@@ -1,0 +1,11 @@
+käyttäjien luominen
+
+salasanojen hashaamiseen käyttämämme bcrypt-kirjasto:
+npm install bcrypt
+
+tokenien käyttö kirjautumisessa ja tiedon tallentamisessa:
+npm install jsonwebtoken
+
+
+
+
